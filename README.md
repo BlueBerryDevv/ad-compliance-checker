@@ -31,3 +31,21 @@ This repository contains the code for an AI-powered advertisement content valida
 git clone https://github.com/your-username/gemma-ad-compliance-checker.git
 cd gemma-ad-compliance-checker
 pip install -r requirements.txt
+```
+## Configuration
+Adjust the config.yaml file to customize the validation rules and thresholds.
+
+
+## License
+
+Copyright (c) 2024 A1 Media Group. All rights reserved.
+
+This software and associated documentation files (the "Software") are proprietary and confidential. 
+Unauthorized copying, transfer or use of the Software, via any medium is strictly prohibited without the express written permission of [회사명].
+
+The Software incorporates Gemma, which is licensed under the Apache License 2.0.
+
+## Acknowledgments
+
+Google for providing the Gemma model
+The open-source community for various tools and libraries used in this project
