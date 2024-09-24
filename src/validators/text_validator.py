@@ -4,6 +4,11 @@ import json_repair
 import logging
 
 from models.gemma_model import Gemma
+from utils.exceptions import (
+    ResultNotFoundError,
+    NotSupportModeError,
+    MaxTokenExceededError,
+)
 
 
 def text_validate(
@@ -17,7 +22,7 @@ def text_validate(
         if isinstance(result, dict):
             return result
         else:
-            raise Exception("ResultNotFoundError")
+            raise ResultNotFoundError
 
     try:
         # LLM API 요청
@@ -41,6 +46,8 @@ def text_validate(
 
         return result
 
+    except (ResultNotFoundError, NotSupportModeError, MaxTokenExceededError):
+        raise
     except Exception as e:
         if retry >= int(os.getenv("MAX_RETRY", 3)):
             raise e

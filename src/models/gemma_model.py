@@ -3,6 +3,7 @@ from langchain_community.llms import Ollama
 from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
 from langchain.prompts import PromptTemplate
+from transformers import AutoTokenizer
 
 from utils.prompts import (
     TEXT_INST,
@@ -11,6 +12,10 @@ from utils.prompts import (
     TEXT_QUERY_OCR,
     FORMATTING_INST,
     FORMATTING_QUERY,
+)
+from utils.exceptions import (
+    NotSupportModeError,
+    MaxTokenExceededError,
 )
 
 
@@ -28,6 +33,9 @@ class Gemma:
         )
         self.prompt = PromptTemplate.from_template("{system}\n{query}")
         self.chain = None
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            os.getenv("TEXT_TOKENIZER", "google/gemma-2-2b-it")
+        )
 
     def ask(self, req: dict | str, mode: str = "text") -> str:
         self.chain = (
@@ -61,8 +69,21 @@ class Gemma:
                     "query": FORMATTING_QUERY.format(req),
                 }
             case _:
-                raise Exception("NotSupportModeError")
+                raise NotSupportModeError
+
+        # 토큰수 검사
+        if self._count_token(query) > int(os.getenv("TEXT_CTX_SIZE", 8192)) - int(
+            os.getenv("TEXT_MAX_PRED", 1024)
+        ):
+            raise MaxTokenExceededError
         return self.chain.invoke(query)
 
     def clear(self):
         self.chain = None
+
+    def _count_token(self, query):
+        return len(
+            self.tokenizer.apply_chat_template(
+                [{"role": "user", "content": query["system"] + "\n" + query["user"]}]
+            )
+        )
