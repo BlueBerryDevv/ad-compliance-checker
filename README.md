@@ -44,7 +44,7 @@ Adjust the config.yaml file to customize the validation rules and thresholds.
 Copyright (c) 2024 A1 Media Group. All rights reserved.
 
 This software and associated documentation files (the "Software") are proprietary and confidential. 
-Unauthorized copying, transfer or use of the Software, via any medium is strictly prohibited without the express written permission of [회사명].
+Unauthorized copying, transfer or use of the Software, via any medium is strictly prohibited without the express written permission of A1 Media Group.
 
 The Software incorporates Gemma, which is licensed under the Apache License 2.0.
 
