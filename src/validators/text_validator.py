@@ -9,6 +9,9 @@ from utils.exceptions import (
     NotSupportModeError,
     MaxTokenExceededError,
 )
+from validators.rule_base_validator import (
+    SymbolsRule,
+)  # FIXME: 임시 규칙기반 검수 로직 적용중
 
 
 def text_validate(
@@ -39,8 +42,11 @@ def text_validate(
 
         # 텍스트 소재 검수시 규칙기반 특수문자 검사
         if mode.lower() == "text":
-            # TODO: 규칙기반 검수 로직
-            pass
+            # FIXME: 임시 규칙기반 검수 로직 적용중
+            symbol_rule = SymbolsRule()
+            symbol_result = symbol_rule.check(data)
+            if any(symbol_result.values()):
+                result["Style and Spelling"] = "Risk"
 
         # TODO: 응답 DB 저장
 
