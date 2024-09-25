@@ -22,14 +22,12 @@ from utils.exceptions import (
 class Gemma:
     def __init__(self):
         self.model = Ollama(
-            {
-                "model": os.getenv("TEXT_MODEL", "gemma2:27b"),
-                "base_url": os.getenv("TEXT_INFERENCE_URL", "http://localhost:11434"),
-                "num_ctx": os.getenv("TEXT_CTX_SIZE", 8192),
-                "temperature": os.getenv("TEXT_TEMP", 0.01),
-                "num_predict": os.getenv("TEXT_MAX_PRED", 1024),
-                "repeat_penalty": os.getenv("TEXT_REPEAT_PEN", 1.15),
-            }
+            model=os.getenv("TEXT_MODEL", "gemma2:27b"),
+            base_url=os.getenv("TEXT_INFERENCE_URL", "http://localhost:11434"),
+            num_ctx=int(os.getenv("TEXT_CTX_SIZE", 8192)),
+            temperature=float(os.getenv("TEXT_TEMP", 0.01)),
+            num_predict=int(os.getenv("TEXT_MAX_PRED", 1024)),
+            repeat_penalty=float(os.getenv("TEXT_REPEAT_PEN", 1.15)),
         )
         self.prompt = PromptTemplate.from_template("{system}\n{query}")
         self.chain = None
