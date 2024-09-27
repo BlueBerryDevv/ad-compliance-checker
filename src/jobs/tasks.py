@@ -2,8 +2,9 @@ from rq import Queue
 from redis import Redis
 from collections import defaultdict
 from models.ocr_model import perform_ocr
-from models.yolo_model import process_image_yolo, classify_image, resize_and_pad
-from models.gemma_model import check_repeat_punctuation
+from models.yolo_model import classify_image, resize_and_pad
+from models.llava_model import analyze_images_llava
+from validators.text_validator import text_validate
 
 redis_conn = Redis()
 q = Queue('ad_validation', connection=redis_conn)
@@ -16,37 +17,22 @@ def ocr_job(image_data):
 
 def image_analysis_job(image_data, mode):
     # 기본값이 "Safe"인 defaultdict 생성
-    result = defaultdict(lambda: "SAFE")
+    result = defaultdict(lambda: "Safe")
     
     if mode == "simple":
-        sexual_result = classify_image(image_data)
-        if sexual_result == 'nsfw':
-            result['sexual'] = 'RISK'
+        simple_result = classify_image(image_data)
+        if simple_result == 'nsfw':
+            result['Sexual Contents'] = 'Risk'
         else:
-            result['sexual'] = 'SAFE'
+            result['Sexual Contents'] = 'Safe'
     elif mode == "detail":
-        image_np = resize_and_pad(image_data)
-        sexual_result = process_image_yolo(image_np)
-        result['sexual'] = sexual_result
+        detail_result = analyze_images_llava(image_data)
     else:
         return "Invalid mode"
     
-    return {
-        "Sexual Contents": result.get("RISK", "SAFE"),
-        "Violent content": result.get("RISK", "SAFE"),
-        "Unidentified images": result.get("unidentified", "RISK")
-    }
+    return detail_result
 
 def text_analysis_job(text_data):
-    punc_status, punc_reason = check_repeat_punctuation(text_data)
-    # analysis_result = analyze_text(text_data)
+    text_result = text_validate(text_data)
     
-    analysis_result['contacts']
-    return {
-        "Misuse of ad features": analysis_result.get("misuse", "Caution"),
-        "Contacts in ad text": analysis_result.get("contacts", "RISK"),
-        "Business name requirements": analysis_result.get("business_name", "SAFE"),
-        "Unidentified business": analysis_result.get("unidentified_business", "SAFE"),
-        "Style and Spelling": analysis_result.get("style_spelling", "Caution"),
-        "Dangerous products or services": analysis_result.get("dangerous_products", "SAFE")
-    }
+    return text_result

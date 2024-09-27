@@ -1,5 +1,6 @@
 from transformers import AutoModelForImageClassification, ViTImageProcessor
-
+import torch
+from PIL import Image
 
 class NSFWModel:
     def __init__(self):
@@ -15,8 +16,3 @@ class NSFWModel:
             predicted_label = logits.argmax(-1).item()
             
             return self.id2label[predicted_label]
-
-
-
-def classify_image(image):
-    return ""

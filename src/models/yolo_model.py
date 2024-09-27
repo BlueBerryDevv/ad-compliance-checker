@@ -87,11 +87,11 @@ def process_image_yolo(image, conf_threshold, iou_threshold, label_mode):
 
     # Determine result based on detected classes
     if 4 in detected_classes and 10 in detected_classes:
-        return "APPROVED_LIMITED"
+        return "Approved_limited"
     elif detected_classes - {4, 6, 10}:  # If there are any classes other than 4, 6, and 10
-        return "RISK"
+        return "Risk"
     else:
-        return "SAFE"
+        return "Safe"
 
 def detect_objects(image):
     return ''
