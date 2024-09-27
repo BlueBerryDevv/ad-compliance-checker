@@ -10,7 +10,7 @@ from utils.exceptions import (
     MaxTokenExceededError,
 )
 from validators.rule_base_validator import (
-    SymbolsRule,
+    check_repeat_punctuation,
 )  # FIXME: 임시 규칙기반 검수 로직 적용중
 
 
@@ -43,10 +43,9 @@ def text_validate(
         # 텍스트 소재 검수시 규칙기반 특수문자 검사
         if mode.lower() == "text":
             # FIXME: 임시 규칙기반 검수 로직 적용중
-            symbol_rule = SymbolsRule()
-            symbol_result = symbol_rule.check(data)
-            if any(symbol_result.values()):
-                result["Style and Spelling"] = "Risk"
+            symbol_result, symbol_reason = check_repeat_punctuation(data)
+
+            result["Style and Spelling"] = symbol_result
 
         # TODO: 응답 DB 저장
 
