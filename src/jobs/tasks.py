@@ -5,12 +5,16 @@ from models.ocr_model import perform_ocr
 from models.yolo_model import classify_image, resize_and_pad
 from models.llava_model import analyze_images_llava
 from validators.text_validator import text_validate
+from validators.drug_validator import check_drug
+from models.ocr_model import Llava
 
 redis_conn = Redis()
 q = Queue('ad_validation', connection=redis_conn)
 
+llava = Llava()
+
 def ocr_job(image_data):
-    ocr_result = perform_ocr(image_data)
+    ocr_result = llava.ask(image_data)
     # OCR 결과를 텍스트 분석 큐에 추가
     q.enqueue(text_analysis_job, ocr_result)
     return "OCR job completed and text analysis job queued"
@@ -34,5 +38,7 @@ def image_analysis_job(image_data, mode):
 
 def text_analysis_job(text_data):
     text_result = text_validate(text_data)
+    drug_result = check_drug(text_data)
+    text_result['prescription drugs'] = drug_result
     
     return text_result
