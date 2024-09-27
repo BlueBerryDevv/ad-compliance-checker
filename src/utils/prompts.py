@@ -97,3 +97,5 @@ FORMATTING_INST = """You are an AI assistant who follows instructions very well.
 Extract JSON from given text:"""
 
 FORMATTING_QUERY = """{}"""
+
+OCR_INST = """A list of text in image"""
